@@ -9,7 +9,7 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 EXPOSE 8080
-ENTRYPOINT ["python", "run.py"]
+#ENTRYPOINT ["python", "run.py"]
 # Twistlock Container Defender - app embedded
 ADD twistlock_defender_app_embedded.tar.gz /tmp
 ENV DEFENDER_TYPE="appEmbedded"
