@@ -1,22 +1,14 @@
-FROM python:3.7-slim-buster
-RUN apt-get update -y
+FROM tomcat:7
 
-WORKDIR /app
+ARG struts2_version=2.3.12
+ARG owner_email=tomcat@paloaltonetworks.com
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-
-COPY . /app
-
+RUN apt-get update
+RUN apt-get -y install curl git nmap dnsutils
+RUN set -ex \
+        && rm -rf /usr/local/tomcat/webapps/* \
+        && chmod a+x /usr/local/tomcat/bin/*.sh
+RUN curl -o /usr/local/tomcat/webapps/ROOT.war https://repo1.maven.org/maven2/org/apache/struts/struts2-showcase/${struts2_version}/struts2-showcase-${struts2_version}.war
 EXPOSE 8080
-ENTRYPOINT ["python", "run.py"]
-# Twistlock Container Defender - app embedded
-#ADD twistlock_defender_app_embedded.tar.gz /tmp
-#ENV DEFENDER_TYPE="appEmbedded"
-#ENV DEFENDER_APP_ID="e-lambda-container"
-#ENV FILESYSTEM_MONITORING="false"
-#ENV WS_ADDRESS="wss://asia-northeast1.cloud.twistlock.com:443"
-#ENV DATA_FOLDER="/tmp"
-#ENV INSTALL_BUNDLE="eyJzZWNyZXRzIjp7InNlcnZpY2UtcGFyYW1ldGVyIjoiSmdHTkloNVdPeXdaemJKdlVyeHE0M2o2M3grL242THZ1Ry9LbTBqRVVsWlhJRjNkNGUyVWxENWNIM3IwdWN2Z3pIaXhxbDhIQmpkd09MUHhBcHpBN1E9PSJ9LCJnbG9iYWxQcm94eU9wdCI6eyJodHRwUHJveHkiOiIiLCJub1Byb3h5IjoiIiwiY2EiOiIiLCJ1c2VyIjoiIiwicGFzc3dvcmQiOnsiZW5jcnlwdGVkIjoiIn19LCJjdXN0b21lcklEIjoiamFwYW4tMTE2NzI1OTc4NiIsImFwaUtleSI6IklFWUFhaEEray9wUGJUQUUzdUlKNzY3YkYrNVErTmRMcVJ3V0d0aExWVU1vOHAvSFNvK2lCcXF4QTdxZHZCTm5xdDBsdjhRcmZFWGhsNlBNTWx2MEZRPT0iLCJtaWNyb3NlZ0NvbXBhdGlibGUiOmZhbHNlLCJpbWFnZVNjYW5JRCI6ImUzZTdjZDVjLWQ0MGQtNWZjNC1hMzk1LWZhY2VlMTdhNTI5NyJ9"
-#ENV FIPS_ENABLED="false"
-#ENTRYPOINT ["/tmp/defender", "app-embedded", "python", "run.py"]
+
+ENTRYPOINT ["catalina.sh", "run"]
